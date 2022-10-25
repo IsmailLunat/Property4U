@@ -6,7 +6,7 @@ using Owin;
 
 namespace IdentitySample
 {
-    [assembly: OwinStartup(typeof(IdentitySample.Startup))]
+    //[assembly: OwinStartup(typeof(IdentitySample.Startup))]
     public partial class Startup
     {
         public void Configuration(IAppBuilder app)
