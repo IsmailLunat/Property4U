@@ -112,7 +112,7 @@ namespace IdentitySample.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("Property4UContextS", throwIfV1Schema: false)
+            : base("Property4UContext", throwIfV1Schema: false)
         {
         }
 

@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using IdentitySample.Models;
-using Property4U.Models;
 using Microsoft.AspNet.Identity;
-using System.Threading.Tasks;
+using Property4U.Models;
 
 namespace Property4U.Controllers
 {
@@ -19,7 +17,6 @@ namespace Property4U.Controllers
         private string strCurrentUserId;
 
         [Authorize(Roles = "Admin, Member")]
-        // GET: Feedbacks
         public async Task<ActionResult> Index(bool? reportAbuse)
         {
             strCurrentUserId = User.Identity.GetUserId();
@@ -35,7 +32,8 @@ namespace Property4U.Controllers
                     feedbacks = db.Feedbacks.Include(f => f.Member).Include(f => f.Properties).Where(m => m.For.ToString().Equals("Report_Abuse"));
                 }
             }
-            else {
+            else
+            {
                 if (reportAbuse == null)
                 {
                     feedbacks = db.Feedbacks.Include(f => f.Member).Include(f => f.Properties).Where(m => m.MemberID.Equals(strCurrentUserId) && m.For.ToString().Equals("Process_Feedback"));
@@ -49,7 +47,6 @@ namespace Property4U.Controllers
         }
 
         [Authorize(Roles = "Admin, Member")]
-        // GET: Feedbacks/Details/5
         public async Task<ActionResult> Details(int? id, bool? reportAbuse)
         {
             if (id == null)
@@ -65,14 +62,13 @@ namespace Property4U.Controllers
         }
 
         [Authorize(Roles = "Member")]
-        // GET: Feedbacks/Create
         public async Task<ActionResult> Create(int? PID, bool? reportAbuse)
         {
             strCurrentUserId = User.Identity.GetUserId();
             var ownerMember = await db.Users.Where(d => d.Id == strCurrentUserId).ToListAsync();
             ViewBag.MemberIDList = new SelectList(ownerMember, "Id", "Id");
 
-            // Allow Feeback to those Properties for which the Member Requested for visted with RequestStatus "Accepted" 
+            // Allow Feeback to those Properties for which the Member Requested for visted with RequestStatus "Accepted"
             var allowedFeebackProperties = await db.Properties.SqlQuery("SELECT p.* FROM Property p INNER JOIN Request rq ON p.ID = rq.PropertyID WHERE MemberID = {0} AND RequestStatus = 2", strCurrentUserId).ToListAsync();
 
             ViewBag.PropertyIDList = new SelectList(allowedFeebackProperties, "ID", "ID");
@@ -82,7 +78,7 @@ namespace Property4U.Controllers
 
         [Authorize(Roles = "Member")]
         // POST: Feedbacks/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -105,7 +101,9 @@ namespace Property4U.Controllers
                 if (feedback.For.ToString().Equals("Report_Abuse") || reportAbuse != null)
                 {
                     return RedirectToAction("Index", new { reportAbuse = true });
-                }else{
+                }
+                else
+                {
                     return RedirectToAction("Index");
                 }
             }
@@ -113,8 +111,8 @@ namespace Property4U.Controllers
             strCurrentUserId = User.Identity.GetUserId();
             var ownerMember = await db.Users.Where(d => d.Id == strCurrentUserId).ToListAsync();
             ViewBag.MemberIDList = new SelectList(ownerMember, "Id", "Id", feedback.MemberID);
-            
-            // Allow Feeback to those Properties for which the Member Requested for visted with RequestStatus "Accepted" 
+
+            // Allow Feeback to those Properties for which the Member Requested for visted with RequestStatus "Accepted"
             var allowedFeebackProperties = await db.Properties.SqlQuery("SELECT p.* FROM Property p INNER JOIN Request rq ON p.ID = rq.PropertyID WHERE MemberID = {0} AND RequestStatus = 2", strCurrentUserId).ToListAsync();
 
             ViewBag.PropertyIDList = new SelectList(allowedFeebackProperties, "ID", "ID", feedback.PropertyID);
@@ -143,7 +141,7 @@ namespace Property4U.Controllers
         //}
 
         //// POST: Feedbacks/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for
         //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
@@ -164,7 +162,6 @@ namespace Property4U.Controllers
         //}
 
         [Authorize(Roles = "Member")]
-        // GET: Feedbacks/Delete/5
         public async Task<ActionResult> Delete(int? id, bool? reportAbuse)
         {
             if (id == null)
@@ -190,8 +187,9 @@ namespace Property4U.Controllers
             if (feedback.For.ToString().Equals("Report_Abuse"))
             {
                 int? flagCount = 0;
-                if(feedback.Properties.Flags != null){
-                    flagCount = (feedback.Properties.Flags != 0)? (feedback.Properties.Flags- 1) : 0;
+                if (feedback.Properties.Flags != null)
+                {
+                    flagCount = (feedback.Properties.Flags != 0) ? (feedback.Properties.Flags - 1) : 0;
                 }
                 // Report Abuse > 5 - Availability Disabled
                 var propertyState = (flagCount <= 5) ? 0 : 1;

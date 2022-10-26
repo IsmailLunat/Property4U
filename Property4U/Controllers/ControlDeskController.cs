@@ -1,29 +1,19 @@
-﻿using System.Web.Mvc;
-
-namespace IdentitySample.Controllers
+﻿namespace IdentitySample.Controllers
 {
-    using IdentitySample.Models;
-    using Microsoft.AspNet.Identity.EntityFramework;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using Property4U.Models;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Net;
-    using System.Net.Http;
-    using System.Threading.Tasks;
-    using System.Timers;
-    using System.Web;
-    using System.Web.Mvc;
-    using System.Web.Script.Serialization;
-    using Microsoft.AspNet.Identity;
     using System.Data.Entity;
-    using PagedList;
     using System.IO;
-    using System.Text;
+    using System.Linq;
+    using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Web.Mvc;
+    using IdentitySample.Models;
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using Property4U.Models;
 
     [RequireHttps]
     [HandleError]
@@ -35,13 +25,20 @@ namespace IdentitySample.Controllers
         [Authorize]
         public async Task<ActionResult> Index()
         {
-            if (User.IsInRole("Admin")) {
+            if (User.IsInRole("Admin"))
+            {
                 return RedirectToAction("ActiveAD", "ControlDesk");
-            }else if (User.IsInRole("Agent")) {
+            }
+            else if (User.IsInRole("Agent"))
+            {
                 return RedirectToAction("ActiveAG", "ControlDesk");
-            }else if (User.IsInRole("Member")) {
+            }
+            else if (User.IsInRole("Member"))
+            {
                 return RedirectToAction("ActiveME", "ControlDesk");
-            }else if (User.IsInRole("Developer")) {
+            }
+            else if (User.IsInRole("Developer"))
+            {
                 return RedirectToAction("ActiveDE", "ControlDesk");
             }
             return View();
@@ -109,12 +106,12 @@ namespace IdentitySample.Controllers
 
             //await Task.WhenAll(emails, myTasks, notes, bookmarks);
 
-
             ControlDeskActiveAD con = new ControlDeskActiveAD();
             con.Users = Deserialize<IdentityUserRole>(users);
             con.Properties = Deserialize<Property>(properties);
             var Renewals = Deserialize<ObjectCon>(renewals);
-            if(Renewals.Count > 0){
+            if (Renewals.Count > 0)
+            {
                 con.RenewalsCost = Renewals[0].ObjectValue;
                 con.RenewalsCount = Renewals[0].ObjectValuesCount;
             }
@@ -147,6 +144,7 @@ namespace IdentitySample.Controllers
 
             return con;
         }
+
         public async Task<ControlDeskActiveAG> GetCDContentAG()
         {
             var propertiesHttp = new HttpClient();
@@ -165,7 +163,8 @@ namespace IdentitySample.Controllers
             con.Properties = Deserialize<Property>(properties);
 
             var propertiesPro = Deserialize<ObjectCon>(propertiesProfit);
-            if(propertiesPro.Count > 0){
+            if (propertiesPro.Count > 0)
+            {
                 con.PropertiesYearlyProfit = propertiesPro[0].ObjectValue;
             }
 
@@ -194,7 +193,7 @@ namespace IdentitySample.Controllers
             // Photos and Order Zip Data Size - ControlDeskActiveAD
             //try
             //{
-            var agentUploadedDataSize = db.Database.SqlQuery<double>("SELECT (SELECT COALESCE(SUM(CAST(Size AS float)),0) AS SizeP FROM Photo as Ph inner join Property as Pr on Ph.propertyID = Pr.ID WHERE Pr.AgentID = '"+ strCurrentUserId + "') + (SELECT COALESCE(SUM(CAST(ZipFileSize AS float)),0) AS SizeO FROM [dbo].[Order] WHERE AgentID = '" + strCurrentUserId + "') AS Size").FirstOrDefault<double>();
+            var agentUploadedDataSize = db.Database.SqlQuery<double>("SELECT (SELECT COALESCE(SUM(CAST(Size AS float)),0) AS SizeP FROM Photo as Ph inner join Property as Pr on Ph.propertyID = Pr.ID WHERE Pr.AgentID = '" + strCurrentUserId + "') + (SELECT COALESCE(SUM(CAST(ZipFileSize AS float)),0) AS SizeO FROM [dbo].[Order] WHERE AgentID = '" + strCurrentUserId + "') AS Size").FirstOrDefault<double>();
             con.AgentUploadedDataSize = agentUploadedDataSize;
             //}
             //catch (InvalidOperationException)
@@ -203,6 +202,7 @@ namespace IdentitySample.Controllers
             //}
             return con;
         }
+
         public async Task<ControlDeskActiveME> GetCDContentME()
         {
             var avaliableAgentsHttp = new HttpClient();
@@ -235,7 +235,8 @@ namespace IdentitySample.Controllers
             }
             con.Properties = Deserialize<Property>(properties);
             var AvaliablePropertiesC = Deserialize<ObjectCon>(avaliableProperties);
-            if (AvaliablePropertiesC.Count > 0) {
+            if (AvaliablePropertiesC.Count > 0)
+            {
                 con.AvaliablePropertiesCount = AvaliablePropertiesC[0].ObjectValuesCount;
             }
             var ActiveBiddingsC = Deserialize<ObjectCon>(biddingsA);
@@ -260,6 +261,7 @@ namespace IdentitySample.Controllers
 
             return con;
         }
+
         public async Task<ControlDeskActiveDEPropertyViewModels> GetCDContentDE()
         {
             // Two Models in Single View
@@ -347,7 +349,8 @@ namespace IdentitySample.Controllers
                 Console.WriteLine(e.Message);
             }
 
-            if (LoadedData != null) {
+            if (LoadedData != null)
+            {
                 //ClearDatabase<ApplicationDbContext>();
                 using (System.Data.Entity.DbContextTransaction dbTran = db.Database.BeginTransaction())
                 {
@@ -371,7 +374,7 @@ namespace IdentitySample.Controllers
                     await db.Database.ExecuteSqlCommandAsync(@"DELETE FROM [dbo].[Address]");
                     await db.Database.ExecuteSqlCommandAsync(@"DELETE FROM [dbo].[Configuration]");
                     await db.Database.ExecuteSqlCommandAsync(@"DELETE FROM [dbo].[AspNetUsers]");
-                    await db.Database.ExecuteSqlCommandAsync(@"" + LoadedData );
+                    await db.Database.ExecuteSqlCommandAsync(@"" + LoadedData);
 
                     //saves all above operations within one transaction
                     await db.SaveChangesAsync();
@@ -379,7 +382,6 @@ namespace IdentitySample.Controllers
                     //commit transaction
                     dbTran.Commit();
                 }
-
             }
 
             @ViewBag.FileData = LoadedData;
@@ -399,6 +401,5 @@ namespace IdentitySample.Controllers
         //        context.SaveChanges();
         //    }
         //}
-        
     }
 }

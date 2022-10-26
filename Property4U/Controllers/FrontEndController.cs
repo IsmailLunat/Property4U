@@ -1,26 +1,15 @@
-﻿using System.Web.Mvc;
-
-namespace IdentitySample.Controllers
+﻿namespace IdentitySample.Controllers
 {
-    using IdentitySample.Models;
-    using Microsoft.AspNet.Identity.EntityFramework;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-    using Property4U.Models;
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
+    using System.Data.Entity;
     using System.Linq;
     using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
-    using System.Timers;
-    using System.Web;
     using System.Web.Mvc;
-    using System.Web.Script.Serialization;
-    using Microsoft.AspNet.Identity;
-    using System.Data.Entity;
+    using IdentitySample.Models;
     using PagedList;
+    using Property4U.Models;
 
     [RequireHttps]
     [HandleError]
@@ -63,7 +52,7 @@ namespace IdentitySample.Controllers
 
             List<HomeTypeSubTypesViewModel> allTypeSubTypesL = new List<HomeTypeSubTypesViewModel>();
             foreach (var type in allTypeSubTypes)
-            { 
+            {
                 HomeTypeSubTypesViewModel model = new HomeTypeSubTypesViewModel();
                 model.Type = type;
                 model.SubTypes = await db.OfSubTypes.Where(o => o.OfTypeID == type.ID).OrderBy(o => o.ID).ToListAsync();
@@ -132,7 +121,7 @@ namespace IdentitySample.Controllers
                 allBiddingPhoto.Add(model);
             }
             viewModel.BiddingPropertyPhoto = allBiddingPhoto.ToList();
-                
+
             return View(viewModel);
         }
 
@@ -140,7 +129,7 @@ namespace IdentitySample.Controllers
         {
             // Two Models in Single View
             HomeViewModels viewModel = new HomeViewModels();
-           
+
             // Find all Types with related SubTypes
             //var types = db.OfSubTypes.Include(o => o.OfType).OrderBy(o => o.OfTypeID).ToList();
             //viewModel.Types = types;
@@ -167,7 +156,7 @@ namespace IdentitySample.Controllers
 
                 allProperties = await db.Properties.Where(p => p.Availability.ToString().Contains("Yes") && p.OfType.Title.ToString().Equals(filterType) && p.OfSubType == subType.ID).OrderBy(p => p.Views).ToListAsync();
             }
-            else if (filterType != null  && page == null)
+            else if (filterType != null && page == null)
             {
                 page = 1;
 
@@ -199,7 +188,6 @@ namespace IdentitySample.Controllers
             ViewBag.CurrentBidding = filterBidding;
             ViewBag.CurrentRangeMi = filterRangeMi;
             ViewBag.CurrentRangeMx = filterRangeMx;
-            
 
             // Update Side menu items count according to filter
             if ((filterType != null && filterSuType != null))
@@ -272,7 +260,6 @@ namespace IdentitySample.Controllers
 
             if (filterFor != null || filterBidding != null || (filterRangeMi != null && filterRangeMx != null))
             {
-
                 if (viewModel.For == null)
                 {
                     // Find all For with number of items count
@@ -300,7 +287,6 @@ namespace IdentitySample.Controllers
                 }
             }
 
-
             List<HomePropertyPhotoViewModel> allPropertyPhoto = new List<HomePropertyPhotoViewModel>();
             foreach (var property in allProperties)
             {
@@ -321,7 +307,6 @@ namespace IdentitySample.Controllers
             //                           || p.Title.ToUpper().Contains(searchProperty.ToUpper()));
             //}
 
-            
             //return View(properties.ToPagedList(pageNumber, pageSize));
 
             return View(viewModel);
@@ -335,7 +320,6 @@ namespace IdentitySample.Controllers
             }
             DetailsPropertyPhotoViewModel viewModel = new DetailsPropertyPhotoViewModel();
             viewModel.Property = await db.Properties.Where(p => p.ID == PID && p.Availability.ToString().Equals("Yes")).FirstOrDefaultAsync();
-
 
             if (viewModel.Property != null)
             {
@@ -413,12 +397,14 @@ namespace IdentitySample.Controllers
                 int results = (allReviewsC != null) ? (allReviewsC.SumRatings / allReviewsC.Total) : 0;
                 viewModel.PropertyRating = results;
             }
-            else {
+            else
+            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             return View(viewModel);
         }
+
         public async Task<ActionResult> Biddings(string sortOrder, string currentFilter, string searchBidding, string status, string propertyView, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
@@ -438,12 +424,14 @@ namespace IdentitySample.Controllers
             ViewBag.CurrentFilter = searchBidding;
 
             BiddingsPropertyPhotoViewModel viewModel = new BiddingsPropertyPhotoViewModel();
-            
+
             IEnumerable<Bidding> allBiddings = null;
             if (status != null)
             {
                 allBiddings = await db.Biddings.Where(b => b.BiddingStatus.ToString().Contains(status)).OrderByDescending(b => b.ID).ToListAsync();
-            }else{
+            }
+            else
+            {
                 allBiddings = await db.Biddings.OrderByDescending(b => b.ID).ToListAsync();
             }
 
@@ -461,12 +449,15 @@ namespace IdentitySample.Controllers
                 case "Type":
                     allBiddings = allBiddings.OrderBy(b => b.Property.For);
                     break;
+
                 case "Price":
                     allBiddings = allBiddings.OrderBy(b => b.Property.Price);
                     break;
+
                 case "Date":
                     allBiddings = allBiddings.OrderByDescending(b => b.PostedOn);
                     break;
+
                 default:
                     allBiddings = allBiddings.OrderByDescending(b => b.ID);
                     break;
@@ -501,7 +492,6 @@ namespace IdentitySample.Controllers
             PlaceBidPropertyPhotoViewModel viewModel = new PlaceBidPropertyPhotoViewModel();
             viewModel.Bidding = await db.Biddings.Where(b => b.ID == BID).FirstOrDefaultAsync();
 
-
             if (viewModel.Bidding != null)
             {
                 var subType = await db.OfSubTypes.FindAsync(viewModel.Bidding.Property.OfSubType);
@@ -514,7 +504,8 @@ namespace IdentitySample.Controllers
                     page = 1;
                 }
 
-                if (viewModel.Bidding.WinningBid != null) {
+                if (viewModel.Bidding.WinningBid != null)
+                {
                     viewModel.WinningBid = await db.Bids.FindAsync(viewModel.Bidding.WinningBid);
                 }
 
@@ -552,11 +543,10 @@ namespace IdentitySample.Controllers
                 viewModel.RelatedBiddings = allBiddingPhoto.ToList();
 
                 var allBids = await db.Bids.Where(r => r.BiddingID == BID).ToListAsync();
-               
+
                 int pageSize = 10;
                 int pageNumber = (page ?? 1);
                 viewModel.Bids = allBids.ToPagedList(pageNumber, pageSize);
-
             }
             else
             {
@@ -590,7 +580,7 @@ namespace IdentitySample.Controllers
             if ((!String.IsNullOrEmpty(Sr) && filterSearch == "Properties") || (!String.IsNullOrEmpty(Sr) && filterSearch == null))
             {
                 allProperties = await db.Properties.Where(p => p.Availability.ToString().Contains("Yes")).OrderByDescending(p => p.ID).ToListAsync();
-                allProperties = allProperties.Where(p => p.ID.ToString().Contains(Sr.ToUpper()) || p.Title.ToUpper().Contains(Sr.ToUpper()) || p.Agent.FullName.ToUpper().Contains(Sr.ToUpper()) );
+                allProperties = allProperties.Where(p => p.ID.ToString().Contains(Sr.ToUpper()) || p.Title.ToUpper().Contains(Sr.ToUpper()) || p.Agent.FullName.ToUpper().Contains(Sr.ToUpper()));
                 List<HomePropertyPhotoViewModel> allPropertyPhoto = new List<HomePropertyPhotoViewModel>();
                 foreach (var property in allProperties)
                 {
@@ -605,7 +595,7 @@ namespace IdentitySample.Controllers
                 int pageNumber = (page ?? 1);
                 viewModel.PropertyPhotoPaged = allPropertyPhoto.ToPagedList(pageNumber, pageSize);
             }
-            else if (Sr != null && filterSearch == "Biddings" )
+            else if (Sr != null && filterSearch == "Biddings")
             {
                 allBiddings = await db.Biddings.OrderByDescending(b => b.ID).ToListAsync();
                 allBiddings = allBiddings.Where(b => b.ID.ToString().Contains(Sr.ToUpper()) || b.Title.ToUpper().Contains(Sr.ToUpper()) || b.Property.Agent.FullName.ToUpper().Contains(Sr.ToUpper()));
@@ -629,8 +619,6 @@ namespace IdentitySample.Controllers
             {
                 ViewBag.CurrentSearch = "Properties";
             }
-
-            
 
             return View(viewModel);
         }
@@ -698,7 +686,7 @@ namespace IdentitySample.Controllers
             string last = WishlistItems.Split(new[] { ',' }).Last();
             foreach (var item in WishlistItems.Split(new[] { ',' }))
             {
-                var type = (item.Substring(0, 2).Equals("11"))? "PID":"BID";
+                var type = (item.Substring(0, 2).Equals("11")) ? "PID" : "BID";
                 if (type.Equals("PID"))
                 {
                     var PID = item.Substring(2);
@@ -757,7 +745,6 @@ namespace IdentitySample.Controllers
                 int pageSize = 9;
                 int pageNumber = (pageProperty ?? 1);
                 viewModel.PropertyPhotoPaged = allPropertyPhoto.ToPagedList(pageNumber, pageSize);
-
             }
             if (!String.IsNullOrEmpty(selectedBIDItems))
             {
@@ -829,7 +816,7 @@ namespace IdentitySample.Controllers
                          {
                              Count = r.Count()
                          }).FirstOrDefaultAsync();
-                    model.ReviewsCount = (ReviewsCount != null) ?  ReviewsCount.Count : 0;
+                    model.ReviewsCount = (ReviewsCount != null) ? ReviewsCount.Count : 0;
 
                     // Find all Reviews with number of items count
                     var allReviewsC = await db.Reviews.Where(r => r.PropertyID == model.Property.ID)
@@ -845,7 +832,6 @@ namespace IdentitySample.Controllers
                     allPropertyPhotoReview.Add(model);
                 }
                 viewModel.PropertyPhotoReview = allPropertyPhotoReview.ToList();
-
             }
 
             return View(viewModel);

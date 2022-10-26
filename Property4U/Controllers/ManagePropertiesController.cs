@@ -64,9 +64,6 @@ namespace Property4U.Controllers
 
             switch (sortOrder)
             {
-                //case "type_desc":
-                //    properties = properties.OrderByDescending(p => p.OfType);
-                //    break;
                 case "for_desc":
                     properties = properties.OrderByDescending(p => p.For);
                     break;
@@ -90,7 +87,6 @@ namespace Property4U.Controllers
             int pageSize = 10;
             int pageNumber = (page ?? 1);
             return View(properties.ToPagedList(pageNumber, pageSize));
-            //return View(properties.ToListAsync());
         }
 
         [Authorize(Roles = "Admin, Agent, Member")]

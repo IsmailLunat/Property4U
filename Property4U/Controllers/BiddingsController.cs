@@ -172,7 +172,6 @@ namespace Property4U.Controllers
         public ActionResult Inquiry(string sortOrder, string currentFilter, int? id, int? biddingID)
         {
             ViewBag.CurrentSort = sortOrder;
-            //ViewBag.TypeSortParm = String.IsNullOrEmpty(sortOrder) ? "type_desc" : "";
             ViewBag.ForSortParm = String.IsNullOrEmpty(sortOrder) ? "for_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
             ViewBag.CurrentFilter = currentFilter;
@@ -181,7 +180,6 @@ namespace Property4U.Controllers
             viewModel.Properties = db.Properties
                 .Include(p => p.Address)
                 .Include(p => p.Agent)
-                //.OrderBy(p => p.Title)
                 .Where(p => p.AllowBidding.ToString().Equals("Allowed") && p.Availability.ToString().Equals("Yes"));
 
             if (id != null)
@@ -200,9 +198,6 @@ namespace Property4U.Controllers
 
             switch (sortOrder)
             {
-                //case "type_desc":
-                //    viewModel.Properties = viewModel.Properties.OrderByDescending(p => p.OfType);
-                //    break;
                 case "for_desc":
                     viewModel.Properties = viewModel.Properties.OrderByDescending(p => p.For);
                     break;

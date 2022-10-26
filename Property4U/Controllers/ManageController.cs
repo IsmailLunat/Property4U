@@ -1,11 +1,11 @@
-﻿using IdentitySample.Models;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using IdentitySample.Models;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 
 namespace IdentitySample.Controllers
 {
@@ -22,6 +22,7 @@ namespace IdentitySample.Controllers
         }
 
         private ApplicationUserManager _userManager;
+
         public ApplicationUserManager UserManager
         {
             get
@@ -332,6 +333,7 @@ namespace IdentitySample.Controllers
         }
 
         #region Helpers
+
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -388,6 +390,6 @@ namespace IdentitySample.Controllers
             Error
         }
 
-        #endregion
+        #endregion Helpers
     }
 }

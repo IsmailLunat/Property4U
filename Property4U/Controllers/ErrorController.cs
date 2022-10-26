@@ -1,9 +1,5 @@
-﻿using Property4U.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using Property4U.Models;
 
 namespace Property4U.Controllers
 {
@@ -16,6 +12,7 @@ namespace Property4U.Controllers
             errorInfo.Description = "An unexpected error occured on our website. The website administrator has been notified.";
             return PartialView(errorInfo);
         }
+
         public ActionResult BadRequest()
         {
             ErrorInfo errorInfo = new ErrorInfo();
@@ -23,6 +20,7 @@ namespace Property4U.Controllers
             errorInfo.Description = "The request cannot be fulfilled due to bad syntax.";
             return PartialView("Error", errorInfo);
         }
+
         public ActionResult NotFound()
         {
             ErrorInfo errorInfo = new ErrorInfo();
@@ -38,6 +36,7 @@ namespace Property4U.Controllers
             errorInfo.Description = "Forbidden: You don't have permission to access [directory] on this server.";
             return PartialView("Error", errorInfo);
         }
+
         public ActionResult URLTooLong()
         {
             ErrorInfo errorInfo = new ErrorInfo();
@@ -45,6 +44,7 @@ namespace Property4U.Controllers
             errorInfo.Description = "The requested URL is too large to process. That’s all we know.";
             return PartialView("Error", errorInfo);
         }
+
         public ActionResult ServiceUnavailable()
         {
             ErrorInfo errorInfo = new ErrorInfo();
@@ -57,6 +57,5 @@ namespace Property4U.Controllers
         {
             base.Dispose(disposing);
         }
-
     }
 }

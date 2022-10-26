@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using IdentitySample.Models;
-using Property4U.Models;
 using Microsoft.AspNet.Identity;
-using System.Threading.Tasks;
+using Property4U.Models;
 
 namespace Property4U.Controllers
 {
@@ -24,7 +22,7 @@ namespace Property4U.Controllers
         {
             strCurrentUserId = User.Identity.GetUserId();
             var bids = db.Bids.Include(b => b.Bidding).Include(b => b.Member).Where(m => m.MemberID.Equals(strCurrentUserId));
-            return View( await bids.ToListAsync());
+            return View(await bids.ToListAsync());
         }
 
         // GET: Bids/Details/5
@@ -56,7 +54,7 @@ namespace Property4U.Controllers
         }
 
         // POST: Bids/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -99,7 +97,7 @@ namespace Property4U.Controllers
         //}
 
         //// POST: Bids/Edit/5
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for
         //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]

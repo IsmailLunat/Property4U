@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using IdentitySample.Models;
-using Property4U.Models;
 using Microsoft.AspNet.Identity;
-using System.Threading.Tasks;
-using System.IO;
+using Property4U.Models;
 
 namespace Property4U.Controllers
 {
@@ -58,7 +57,7 @@ namespace Property4U.Controllers
         }
 
         // POST: Ads/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -68,7 +67,7 @@ namespace Property4U.Controllers
             {
                 ModelState.AddModelError(string.Empty, "Ad image file must be chosen.");
             }
-            
+
             if (ModelState.IsValid)
             {
                 if (adFile != null)
@@ -90,7 +89,6 @@ namespace Property4U.Controllers
                         adFile.SaveAs(configAdToPath);
                         ad.Path = adImageNameWithEx;
                     }
-                    
                 }
 
                 // Update Order db Status accordingly
@@ -144,7 +142,7 @@ namespace Property4U.Controllers
         }
 
         // POST: Ads/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]

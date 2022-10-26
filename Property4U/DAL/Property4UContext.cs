@@ -11,7 +11,7 @@ namespace Property4U.DAL
     public class Property4UContext : DbContext, IDisposable
     {
 
-        public Property4UContext() : base("Property4UContextS")
+        public Property4UContext() : base("Property4UContext")
         {
         }
 

@@ -1,22 +1,18 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Data.Entity;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
 using IdentitySample.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using System;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using System.Diagnostics;
-using System.Web.Security;
-using System.Data.Entity;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using Property4U.Models;
 using Newtonsoft.Json;
+using Property4U.Models;
 
 namespace IdentitySample.Controllers
 {
@@ -24,17 +20,19 @@ namespace IdentitySample.Controllers
     public class AccountController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
         }
 
         private ApplicationUserManager _userManager;
+
         public ApplicationUserManager UserManager
         {
             get
@@ -88,7 +86,7 @@ namespace IdentitySample.Controllers
                     // Check User Role is Admin and Configurations are not set then redirect after login
                     var userInfo = db.Users.Where(u => u.Email == model.Email).Single();
                     var isConfigurationsEmpty = await db.Configurations.ToListAsync();
-                    
+
                     // Generate Token by Posting Request to Authenticate User Credentials
                     HttpClient client = new HttpClient();
                     client.BaseAddress = new Uri(GetSiteRoot());
@@ -117,7 +115,6 @@ namespace IdentitySample.Controllers
                         return null;
                     }
 
-
                     if (UserManager.IsInRole(userInfo.Id, "Admin") && !isConfigurationsEmpty.Any())
                     {
                         return RedirectToAction("Edit", "Configurations", new { id = 1 });
@@ -128,8 +125,10 @@ namespace IdentitySample.Controllers
                     }
                 case SignInStatus.LockedOut:
                     return View("Lockout");
+
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl });
+
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
@@ -197,8 +196,10 @@ namespace IdentitySample.Controllers
             {
                 case SignInStatus.Success:
                     return RedirectToLocal(model.ReturnUrl);
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
+
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid code.");
@@ -233,7 +234,7 @@ namespace IdentitySample.Controllers
                 user.City = model.City;
                 user.State = model.State;
                 user.PostalCode = model.PostalCode;
-                
+
                 if (ImageFile != null)
                 {
                     string photoUserEx = Path.GetExtension(ImageFile.FileName);
@@ -275,13 +276,15 @@ namespace IdentitySample.Controllers
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             // On Confirmation Set User Role using ID
-            if (result.Succeeded) {
+            if (result.Succeeded)
+            {
                 UserManager.AddToRole(userId, "Member");
                 return View("ConfirmEmail");
-            }else{
+            }
+            else
+            {
                 return View("Error");
             }
-            //return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
         //
@@ -432,10 +435,13 @@ namespace IdentitySample.Controllers
             {
                 case SignInStatus.Success:
                     return RedirectToLocal(returnUrl);
+
                 case SignInStatus.LockedOut:
                     return View("Lockout");
+
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl });
+
                 case SignInStatus.Failure:
                 default:
                     // If the user does not have an account, then prompt the user to create an account
@@ -517,6 +523,7 @@ namespace IdentitySample.Controllers
         }
 
         #region Helpers
+
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -574,6 +581,7 @@ namespace IdentitySample.Controllers
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }
-        #endregion
+
+        #endregion Helpers
     }
 }

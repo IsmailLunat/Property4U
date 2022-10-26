@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using IdentitySample.Models;
-using Property4U.Models;
 using Microsoft.AspNet.Identity;
-using System.IO;
 using Property4U.Core;
+using Property4U.Models;
 
 namespace Property4U.Controllers
 {
@@ -49,7 +46,7 @@ namespace Property4U.Controllers
         //}
 
         //// POST: Configurations/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for
         //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
@@ -95,13 +92,12 @@ namespace Property4U.Controllers
         }
 
         // POST: Configurations/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "ID,ConfigAdminID,CompanyName,ShortTitle,Tagline,WebsiteURL,Email,PublicPhoneNo,OfficeAddress,LogoPath,Favicon,ThemeColor,PropertyRenewal,RenewalCost,SchedulerInterval,TimeZoneId,CompanyDescription,Keywords,FacebookAppId,FacebookAppSecret,GoogleClientId,GoogleClientSecret,FacebookURL,TwitterURL,GooglePlusURL,LinkedInURL,DribbbleURL,LastEdit")] Configuration configuration, HttpPostedFileBase logoFile, string oldLogoPath, HttpPostedFileBase faviconFile, string oldfaviconPath)
         {
-
             if (ModelState.IsValid)
             {
                 if (logoFile != null)
